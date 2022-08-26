@@ -25,4 +25,4 @@ imshow(hall_90_origin);
 title("hall\_90");
 subplot(1, 4, 4);
 imshow(hall_180_origin);
-title("hall\_left");
+title("hall\_180");

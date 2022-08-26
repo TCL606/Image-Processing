@@ -10,7 +10,7 @@ maphall_1 = dct2(hall_direct);
 DC_128 = dct2(zeros(part_h, part_w) + 128);
 maphall_2 = dct2(hall_part);
 maphall_2(1, 1) = maphall_2(1, 1) - DC_128(1, 1);
-delta = sum((maphall_1 - maphall_2).^2, 'all');
+delta = sum((maphall_1 - maphall_2).^2, 'all') / part_h / part_w;
 
 subplot(1, 2, 1);
 imshow(rescale(hall_direct));

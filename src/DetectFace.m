@@ -18,6 +18,7 @@ function [img, faces_num] = DetectFace(img, face_feature, L, similarity_threshol
     x_large = x_less + (row_width - 1);
     y_less = y_large - (col_width - 1);
 
+    % combine blocks
     for i = 1: 1: length(x_less)
         if x_less(i) ~= -1
             for j = i + 1: 1: length(x_less)
@@ -41,6 +42,7 @@ function [img, faces_num] = DetectFace(img, face_feature, L, similarity_threshol
         end
     end
 
+    % remove overlap blocks
     face_idx_1 = x_less ~= -1;
     x_less = x_less(face_idx_1);
     x_large = x_large(face_idx_1);
@@ -87,10 +89,32 @@ function [img, faces_num] = DetectFace(img, face_feature, L, similarity_threshol
         end
     end
     
+    % remove small blocks
     for i = 1: 1: length(x_less)
         if x_less(i) ~= -1
             if (x_large(i) - x_less(i)) * (y_large(i) - y_less(i)) <= least_face_area
                 x_less(i) = -1;
+            end
+        end
+    end
+    
+    % optimize rectangle blocks
+    for i = 1: 1: length(x_less)
+        if x_less(i) ~= -1
+            delta_x = x_large(i) - x_less(i);
+            delta_y = y_large(i) - y_less(i);
+            if delta_x - delta_y > delta_x / 2
+                delta = floor((delta_x - delta_y) / 8);
+                x_less(i) = x_less(i) + delta;
+                x_large(i) = x_large(i) -  3 * delta;
+                y_less(i) = max(y_less(i) - 2 * delta, 1);
+                y_large(i) = min(y_large(i) + 2 * delta, size(img, 2));
+            elseif delta_y - delta_x > delta_y / 2
+                delta = floor((delta_y - delta_x) / 4);
+                y_less(i) = y_less(i) + 2 * delta;
+                y_large(i) = y_large(i) - 2 * delta;
+                x_less(i) = max(x_less(i) - 2 * delta, 1);
+                x_large(i) = min(x_large(i) + 2 * delta, size(img, 1));
             end
         end
     end

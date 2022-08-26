@@ -1,5 +1,5 @@
 function [dc_code, ac_code, img_height, img_width] = dct_conceal_3(img, info, DCTAB, ACTAB, QTAB)
-     hall_pre = double(img) - 128;
+    hall_pre = double(img) - 128;
     hall_quan = blockproc(hall_pre, [8, 8], @(mat)(zig_zag(round(dct2(mat.data) ./ QTAB))));
     [height, width] = size(hall_quan);
 
